@@ -168,6 +168,36 @@ function getInfoFromISBNByGoogle(isbn, callback) {
     });
 }
 
+function setProductInfo(result) {
+  const scannedBox = document.createElement('scanned-box');
+  const product = scannedBox.shadowRoot.querySelector('.product');
+  scannedBox.shadowRoot.querySelector('.code').textContent = result.text;
+  if (isValidISBN13(result.text)) {
+    getInfoFromISBN(result.text, productInfo => {
+      product.appendChild(productInfo);
+    });
+  } else if (isValidISBN10(result.text)) {
+    ['978', '979'].some(prefix => {
+      const isbn13 = toISBN13(prefix, result.text);
+      if (isValidISBN13(isbn13)) {
+        getInfoFromISBN(result.text, title => {
+          product.appendChild(productInfo);
+        });
+        return true;
+      }
+    });
+  } else if (isValidEAN(result.text)) {
+    getInfoFromISBN(result.text, productInfo => {
+      product.appendChild(productInfo);
+    });
+  }
+  tbody.insertBefore(scannedBox.shadowRoot, tbody.children[1]);
+  waiting = true;
+  setTimeout(() => {
+    waiting = false;
+  }, 1000);
+}
+
 let waiting = false;
 const codeReader = new ZXing.BrowserMultiFormatReader();
 // const codeReader = new ZXing.BrowserBarcodeReader();
@@ -176,35 +206,10 @@ codeReader.getVideoInputDevices().then(videoInputDevices => {
   const selectedDeviceId = videoInputDevices[0].deviceId;
   codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
     if (!waiting && result) {
-      const trs = tbody.children;
-      if (trs[trs.length - 1].children[0].textContent != result.text) {
-        const scannedBox = document.createElement('scanned-box');
-        const product = scannedBox.shadowRoot.querySelector('.product');
-        scannedBox.shadowRoot.querySelector('.code').textContent = result.text;
-        if (isValidISBN13(result.text)) {
-          getInfoFromISBN(result.text, productInfo => {
-            product.appendChild(productInfo);
-          });
-        } else if (isValidISBN10(result.text)) {
-          ['978', '979'].some(prefix => {
-            const isbn13 = toISBN13(prefix, result.text);
-            if (isValidISBN13(isbn13)) {
-              getInfoFromISBN(result.text, title => {
-                product.appendChild(productInfo);
-              });
-              return true;
-            }
-          });
-        } else if (isValidEAN(result.text)) {
-          getInfoFromISBN(result.text, productInfo => {
-            product.appendChild(productInfo);
-          });
-        }
-        tbody.insertBefore(scannedBox.shadowRoot, tbody.children[1]);
-        waiting = true;
-        setTimeout(() => {
-          waiting = false;
-        }, 1000);
+      if (tbody.children.length == 1) {
+        setProductInfo(result);
+      } else if (tbody.children[1].children[0].textContent != result.text) {
+        setProductInfo(result);
       }
     }
   });
