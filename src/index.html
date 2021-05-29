@@ -15,18 +15,6 @@
     <title>Barcode Memo</title>
     <meta name="description" content="バーコード / QRコードを連続でメモします。">
     <script>
-      function setManifest(path) {
-        const manifest = document.createElement('link');
-        manifest.rel = 'manifest';
-        manifest.href = '/barcode-memo/favicon/' + path;
-        document.head.appendChild(manifest);
-      }
-      var userAgent = navigator.userAgent.toLowerCase();
-      if (userAgent.indexOf("iphone") > 0 || userAgent.indexOf("ipad") > 0) {
-        setManifest('ios.webmanifest');
-      } else {
-        setManifest('site.webmanifest');
-      }
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('/barcode-memo/sw.js');
