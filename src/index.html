@@ -40,7 +40,7 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-config" content="/barcode-memo/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <style>
       .cursor { cursor:pointer; }
       @media (orientation: portrait) {
@@ -59,7 +59,7 @@
       <nav class="navbar navbar-expand navbar-light">
         <div class="container">
           <a class="navbar-brand" href="/barcode-memo/">Barcode Memo</a>
-          <button title="toggle dark-mode" onclick="toggleDarkMode()" class="ml-2 close">🌓</button>
+          <button title="ダークモード切替" onclick="toggleDarkMode()" class="fs-4 btn p-0">🌓</button>
         </div>
       </nav>
     </header>
@@ -73,8 +73,10 @@
           <video id="video" class="w-100"></video>
         </div>
         <div class="col-sm">
-          <table id="memo" class="table table-striped">
-            <tr><th>コード</th><th>製品名</th><th onclick="toCSV()" class="cursor" data-toggle="tool-tip" title="CSV をクリップボードに保存">📋</th></tr>
+          <table class="table table-striped">
+            <tbody id="memo">
+              <tr><th>コード</th><th>製品名</th><th onclick="toCSV()" class="cursor" data-toggle="tool-tip" title="CSV をクリップボードに保存">📋</th></tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -85,7 +87,7 @@
         <a class="px-1" href="/terms/">Terms</a>
         <a class="px-1" href="https://github.com/marmooo/barcode-memo">Contact</a>
       </div>
-      <div class="text-muted">&copy; <a href="https://github.com/marmooo">marmooo</a>. All Rights Reserved.</div>
+      <div class="text-muted">&copy; <a href="https://github.com/marmooo">marmooo</a></div>
     </footer>
     <template id="scanned-box">
       <tr>
