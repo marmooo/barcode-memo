@@ -50,7 +50,7 @@
             <img src="/barcode-memo/favicon/original.svg" width="32" height="32">
             Barcode Memo
           </a>
-          <button title="ダークモード切替" onclick="toggleDarkMode()" class="fs-4 btn p-0">🌓</button>
+          <button title="ダークモード切替" id="toggleDarkMode" class="fs-4 btn p-0">🌓</button>
         </div>
       </nav>
     </header>
@@ -66,7 +66,7 @@
         <div class="col-sm">
           <table class="table table-striped">
             <tbody id="memo">
-              <tr><th>コード</th><th>製品名</th><th onclick="toCSV()" class="cursor" data-toggle="tool-tip" title="CSV をクリップボードに保存">📋</th></tr>
+              <tr><th>コード</th><th>製品名</th><th id="toCSV" class="cursor" data-toggle="tool-tip" title="CSV をクリップボードに保存">📋</th></tr>
             </tbody>
           </table>
         </div>
