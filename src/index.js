@@ -106,7 +106,7 @@ function isValidISBN10(isbn10) {
   let checkSum = 0;
   const chars = targetCode.split("");
   for (let i = 0; i < (chars.length - 1); i++) {
-    checkSum += (weight * parseInt(chars[i]));
+    checkSum += weight * parseInt(chars[i]);
     weight--;
   }
   checkSum = modulas - (checkSum % modulas);
@@ -214,15 +214,19 @@ const codeReader = new ZXing.BrowserMultiFormatReader();
 const tbody = document.getElementById("memo").querySelector("tr").parentNode;
 codeReader.getVideoInputDevices().then((videoInputDevices) => {
   const selectedDeviceId = videoInputDevices[0].deviceId;
-  codeReader.decodeFromVideoDevice(selectedDeviceId, "video", (result, _err) => {
-    if (!waiting && result) {
-      if (tbody.children.length == 1) {
-        setProductInfo(result);
-      } else if (tbody.children[1].children[0].textContent != result.text) {
-        setProductInfo(result);
+  codeReader.decodeFromVideoDevice(
+    selectedDeviceId,
+    "video",
+    (result, _err) => {
+      if (!waiting && result) {
+        if (tbody.children.length == 1) {
+          setProductInfo(result);
+        } else if (tbody.children[1].children[0].textContent != result.text) {
+          setProductInfo(result);
+        }
       }
-    }
-  });
+    },
+  );
 }).catch((err) => {
   console.error(err);
 });
