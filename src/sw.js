@@ -1,8 +1,8 @@
-var CACHE_NAME = '2022-03-20 11:10';
+var CACHE_NAME = '2022-05-17 00:00';
 var urlsToCache = [
   "/barcode-memo/",
   "/barcode-memo/index.js",
-  "/barcode-memo/favicon/original.svg",
+  "/barcode-memo/favicon/favicon.svg",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css",
   "https://cdn.jsdelivr.net/npm/@zxing/library@0.18.5/umd/index.min.js",
 ];
