@@ -3,7 +3,6 @@ function loadConfig() {
     document.documentElement.dataset.theme = "dark";
   }
 }
-loadConfig();
 
 function toggleDarkMode() {
   if (localStorage.getItem("darkMode") == 1) {
@@ -14,22 +13,6 @@ function toggleDarkMode() {
     document.documentElement.dataset.theme = "dark";
   }
 }
-
-customElements.define(
-  "scanned-box",
-  class extends HTMLElement {
-    constructor() {
-      super();
-      const template = document.getElementById("scanned-box").content.cloneNode(
-        true,
-      );
-      template.querySelector(".cursor").onclick = function () {
-        this.parentNode.remove();
-      };
-      this.attachShadow({ mode: "open" }).appendChild(template);
-    }
-  },
-);
 
 function _toISBN10(isbn13) {
   isbn13 += "";
@@ -178,7 +161,32 @@ function _getInfoFromISBNByGoogle(isbn, callback) {
     });
 }
 
-function setProductInfo(result) {
+function initScan() {
+  const codeReader = new ZXing.BrowserMultiFormatReader();
+  // const codeReader = new ZXing.BrowserBarcodeReader();
+  const tbody = document.getElementById("memo");
+  codeReader.getVideoInputDevices().then((videoInputDevices) => {
+    const selectedDeviceId = videoInputDevices[0].deviceId;
+    codeReader.decodeFromVideoDevice(
+      selectedDeviceId,
+      "video",
+      (result, _err) => {
+        if (!waiting && result) {
+          if (
+            tbody.children.length == 0 ||
+            tbody.children[1].children[0].textContent != result.text
+          ) {
+            setProductInfo(result, tbody);
+          }
+        }
+      },
+    );
+  }).catch((err) => {
+    console.error(err);
+  });
+}
+
+function setProductInfo(result, tbody) {
   const scannedBox = document.createElement("scanned-box");
   const product = scannedBox.shadowRoot.querySelector(".product");
   scannedBox.shadowRoot.querySelector(".code").textContent = result.text;
@@ -201,36 +209,12 @@ function setProductInfo(result) {
       product.appendChild(productInfo);
     });
   }
-  tbody.insertBefore(scannedBox.shadowRoot, tbody.children[1]);
+  tbody.appendChild(scannedBox.shadowRoot);
   waiting = true;
   setTimeout(() => {
     waiting = false;
   }, 1000);
 }
-
-let waiting = false;
-const codeReader = new ZXing.BrowserMultiFormatReader();
-// const codeReader = new ZXing.BrowserBarcodeReader();
-const tbody = document.getElementById("memo");
-codeReader.getVideoInputDevices().then((videoInputDevices) => {
-  const selectedDeviceId = videoInputDevices[0].deviceId;
-  codeReader.decodeFromVideoDevice(
-    selectedDeviceId,
-    "video",
-    (result, _err) => {
-      if (!waiting && result) {
-        if (
-          tbody.children.length == 0 ||
-          tbody.children[1].children[0].textContent != result.text
-        ) {
-          setProductInfo(result);
-        }
-      }
-    },
-  );
-}).catch((err) => {
-  console.error(err);
-});
 
 function toCSV() {
   let csv = "";
@@ -243,49 +227,30 @@ function toCSV() {
   copyToClipboard(csv);
 }
 
-function iosCopyToClipboard(el) {
-  // resolve the element
-  el = (typeof el === "string") ? document.querySelector(el) : el;
-
-  // handle iOS as a special case
-  if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
-    // save current contentEditable/readOnly status
-    const editable = el.contentEditable;
-    const readOnly = el.readOnly;
-
-    // convert to editable with readonly to stop iOS keyboard opening
-    el.contentEditable = true;
-    el.readOnly = true;
-
-    // create a selectable range
-    const range = document.createRange();
-    range.selectNodeContents(el);
-
-    // select the range
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    el.setSelectionRange(0, 999999);
-
-    // restore contentEditable/readOnly to original state
-    el.contentEditable = editable;
-    el.readOnly = readOnly;
-  } else {
-    el.select();
-  }
-
-  // execute copy command
-  document.execCommand("copy");
-}
-
-function copyToClipboard(text) {
-  const input = document.createElement("textarea");
-  document.body.appendChild(input);
-  input.value = text;
-  iosCopyToClipboard(input);
-  document.body.removeChild(input);
+async function copyToClipboard(text) {
+  await navigator.clipboard.writeText(text);
   alert("クリップボードにコピーしました。");
 }
+
+customElements.define(
+  "scanned-box",
+  class extends HTMLElement {
+    constructor() {
+      super();
+      const template = document.getElementById("scanned-box").content.cloneNode(
+        true,
+      );
+      template.querySelector(".cursor").onclick = function () {
+        this.parentNode.remove();
+      };
+      this.attachShadow({ mode: "open" }).appendChild(template);
+    }
+  },
+);
+
+let waiting = false;
+loadConfig();
+initScan();
 
 document.getElementById("toggleDarkMode").onclick = toggleDarkMode;
 document.getElementById("toCSV").onclick = toCSV;
