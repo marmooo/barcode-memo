@@ -211,7 +211,7 @@ function setProductInfo(result) {
 let waiting = false;
 const codeReader = new ZXing.BrowserMultiFormatReader();
 // const codeReader = new ZXing.BrowserBarcodeReader();
-const tbody = document.getElementById("memo").querySelector("tr").parentNode;
+const tbody = document.getElementById("memo");
 codeReader.getVideoInputDevices().then((videoInputDevices) => {
   const selectedDeviceId = videoInputDevices[0].deviceId;
   codeReader.decodeFromVideoDevice(
@@ -219,9 +219,10 @@ codeReader.getVideoInputDevices().then((videoInputDevices) => {
     "video",
     (result, _err) => {
       if (!waiting && result) {
-        if (tbody.children.length == 1) {
-          setProductInfo(result);
-        } else if (tbody.children[1].children[0].textContent != result.text) {
+        if (
+          tbody.children.length == 0 ||
+          tbody.children[1].children[0].textContent != result.text
+        ) {
           setProductInfo(result);
         }
       }
@@ -233,13 +234,10 @@ codeReader.getVideoInputDevices().then((videoInputDevices) => {
 
 function toCSV() {
   let csv = "";
-  const trs = [
-    ...document.getElementById("memo").querySelector("tr").parentNode.children,
-  ];
+  const trs = [...document.getElementById("memo").getElementsByTagName("tr")];
   trs.forEach((tr) => {
-    const line = [...tr.children].slice(0, 2).map((td) => td.textContent).join(
-      ", ",
-    );
+    const target = [...tr.children].slice(0, 2);
+    const line = target.map((td) => td.textContent).join(", ");
     csv += line + "\n";
   });
   copyToClipboard(csv);

@@ -69,9 +69,16 @@
         </div>
         <div class="col-sm">
           <table class="table table-striped">
-            <tbody id="memo">
-              <tr><th>コード</th><th>製品名</th><th id="toCSV" class="cursor" data-toggle="tool-tip" title="CSV をクリップボードに保存">📋</th></tr>
-            </tbody>
+            <thead>
+              <tr>
+                <th>コード</th>
+                <th>製品名</th>
+                <th>
+                  <button title="CSV をクリップボードに保存" id="toCSV" class="btn p-0">📋</button>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="memo" class="notranslate"></tbody>
           </table>
         </div>
       </div>
