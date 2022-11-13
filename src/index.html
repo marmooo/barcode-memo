@@ -33,7 +33,6 @@
     <link rel="manifest" href="/barcode-memo/favicon/site.webmanifest">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <style>
-      .cursor { cursor:pointer; }
       @media (orientation: portrait) {
         video { max-height:50vh; }
       }
@@ -91,10 +90,13 @@
       <div class="text-muted">&copy; <a href="https://github.com/marmooo">marmooo</a></div>
     </footer>
     <template id="scanned-box">
+      <style>
+        button { cursor:pointer; background:transparent; border:0; padding:0; }
+      </style>
       <tr>
         <td class="code"></td>
         <td class="product"></td>
-        <td class="cursor">✖</td>
+        <td><button>✖</button></td>
       </tr>
     </template>
     <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.5/umd/index.min.js"></script>

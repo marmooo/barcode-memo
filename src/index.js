@@ -240,8 +240,8 @@ customElements.define(
       const template = document.getElementById("scanned-box").content.cloneNode(
         true,
       );
-      template.querySelector(".cursor").onclick = function () {
-        this.parentNode.remove();
+      template.querySelector("button").onclick = function () {
+        this.parentNode.parentNode.remove();
       };
       this.attachShadow({ mode: "open" }).appendChild(template);
     }
