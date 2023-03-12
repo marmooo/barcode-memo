@@ -23,7 +23,7 @@ function _toISBN10(isbn13) {
   for (let i = 0; i < 9; i++) {
     sum += digits[i] * (10 - i);
   }
-  chk_tmp = 11 - (sum % 11);
+  chkTmp = 11 - (sum % 11);
   if (chkTmp == 10) {
     chkDigit = "x";
   } else if (chkTmp == 11) {
