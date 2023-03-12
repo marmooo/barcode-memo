@@ -1,4 +1,4 @@
-var CACHE_NAME = "2023-03-13 01:30";
+var CACHE_NAME = "2023-03-13 01:40";
 var urlsToCache = [
   "/barcode-memo/",
   "/barcode-memo/index.js",

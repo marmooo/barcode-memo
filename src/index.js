@@ -14,25 +14,14 @@ function toggleDarkMode() {
   }
 }
 
+// https://webbibouroku.com/Blog/Article/isbn-10-js
 function _toISBN10(isbn13) {
-  isbn13 += "";
-  let digits = [];
-  digits = isbn13.substr(3, 9).split("");
-  let sum = 0;
-  let chkTmp, chkDigit;
-  for (let i = 0; i < 9; i++) {
-    sum += digits[i] * (10 - i);
-  }
-  chkTmp = 11 - (sum % 11);
-  if (chkTmp == 10) {
-    chkDigit = "x";
-  } else if (chkTmp == 11) {
-    chkDigit = 0;
-  } else {
-    chkDigit = chkTmp;
-  }
-  digits.push(chkDigit);
-  return digits.join("");
+  const sum = isbn13.split("").slice(3, 12).reduce((acc, c, i) => {
+    return acc + (c[0] - "0") * (10 - i);
+  }, 0);
+  const checkDigit = 11 - sum % 11;
+  const isbn10 = isbn13.substring(3, 12) + checkDigit.toString();
+  return isbn10;
 }
 
 // https://fight-tsk.blogspot.com/2014/09/isbnjavascript.html
