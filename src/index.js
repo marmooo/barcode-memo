@@ -187,7 +187,7 @@ function setProductInfo(result, tbody) {
     ["978", "979"].some((prefix) => {
       const isbn13 = toISBN13(prefix, result.text);
       if (isValidISBN13(isbn13)) {
-        getInfoFromISBN(result.text, (_title) => {
+        getInfoFromISBN(result.text, (productInfo) => {
           product.appendChild(productInfo);
         });
         return true;
