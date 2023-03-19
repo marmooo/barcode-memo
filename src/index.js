@@ -150,59 +150,67 @@ function _getInfoFromISBNByGoogle(isbn, callback) {
     });
 }
 
+function tick(time) {
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    loadingMessage.hidden = true;
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    canvasElement.width = width;
+    canvasElement.height = height;
+    canvas.drawImage(video, 0, 0, width, height);
+    if (time - prevTime > 500) {
+      prevTime = time;
+      const imageData = canvas.getImageData(0, 0, width, height);
+      worker.postMessage({
+        data: imageData.data,
+        width: width,
+        height: height,
+      });
+    }
+  } else {
+    loadingMessage.textContent = "⌛ Loading video...";
+  }
+  requestAnimationFrame(tick);
+}
+
 function initScan() {
-  const codeReader = new ZXing.BrowserMultiFormatReader();
-  // const codeReader = new ZXing.BrowserBarcodeReader();
-  const tbody = document.getElementById("memo");
-  codeReader.getVideoInputDevices().then((videoInputDevices) => {
-    const selectedDeviceId = videoInputDevices[0].deviceId;
-    codeReader.decodeFromVideoDevice(
-      selectedDeviceId,
-      "video",
-      (result, _err) => {
-        if (!waiting && result) {
-          if (
-            tbody.children.length == 0 ||
-            tbody.children[1].children[0].textContent != result.text
-          ) {
-            setProductInfo(result, tbody);
-          }
-        }
-      },
-    );
+  navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: { facingMode: "environment" },
+  }).then((stream) => {
+    video.srcObject = stream;
+    video.setAttribute("playsinline", "true");
+    video.play();
+    requestAnimationFrame(tick);
   }).catch((err) => {
-    console.error(err);
+    alert(err.message);
   });
 }
 
-function setProductInfo(result, tbody) {
+function setProductInfo(code) {
   const scannedBox = document.createElement("scanned-box");
   const product = scannedBox.shadowRoot.querySelector(".product");
-  scannedBox.shadowRoot.querySelector(".code").textContent = result.text;
-  if (isValidISBN13(result.text)) {
-    getInfoFromISBN(result.text, (productInfo) => {
+  scannedBox.shadowRoot.querySelector(".code").textContent = code;
+  if (isValidISBN13(code)) {
+    getInfoFromISBN(code, (productInfo) => {
       product.appendChild(productInfo);
     });
-  } else if (isValidISBN10(result.text)) {
+  } else if (isValidISBN10(code)) {
     ["978", "979"].some((prefix) => {
-      const isbn13 = toISBN13(prefix, result.text);
+      const isbn13 = toISBN13(prefix, code);
       if (isValidISBN13(isbn13)) {
-        getInfoFromISBN(result.text, (productInfo) => {
+        getInfoFromISBN(code, (productInfo) => {
           product.appendChild(productInfo);
         });
         return true;
       }
     });
-  } else if (isValidEAN(result.text)) {
-    getInfoFromISBN(result.text, (productInfo) => {
+  } else if (isValidEAN(code)) {
+    getInfoFromISBN(code, (productInfo) => {
       product.appendChild(productInfo);
     });
   }
-  tbody.appendChild(scannedBox.shadowRoot);
-  waiting = true;
-  setTimeout(() => {
-    waiting = false;
-  }, 1000);
+  document.getElementById("memo").appendChild(scannedBox.shadowRoot);
 }
 
 function toCSV() {
@@ -221,24 +229,42 @@ async function copyToClipboard(text) {
   alert("クリップボードにコピーしました。");
 }
 
+function initWorker() {
+  const worker = new Worker("/barcode-memo/koder.js");
+  worker.onmessage = (ev) => {
+    const code = ev.data.data;
+    if (!code) return;
+    if (prevCode != code) {
+      prevCode = code;
+      setProductInfo(code);
+    }
+  };
+  return worker;
+}
+
 customElements.define(
   "scanned-box",
   class extends HTMLElement {
     constructor() {
       super();
-      const template = document.getElementById("scanned-box").content.cloneNode(
-        true,
-      );
-      template.querySelector("button").onclick = function () {
-        this.parentNode.parentNode.remove();
+      const template = document.getElementById("scanned-box")
+        .content.cloneNode(true);
+      template.querySelector("button").onclick = (event) => {
+        event.target.parentNode.parentNode.remove();
       };
       this.attachShadow({ mode: "open" }).appendChild(template);
     }
   },
 );
 
-let waiting = false;
+let prevTime = 0;
+let prevCode;
 loadConfig();
+const video = document.createElement("video");
+const canvasElement = document.getElementById("canvas");
+const canvas = canvasElement.getContext("2d");
+const loadingMessage = document.getElementById("loadingMessage");
+const worker = initWorker();
 initScan();
 
 document.getElementById("toggleDarkMode").onclick = toggleDarkMode;

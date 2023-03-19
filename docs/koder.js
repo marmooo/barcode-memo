@@ -1,0 +1,1 @@
+importScripts("/barcode-memo/koder/zbar.js"),importScripts("/barcode-memo/koder/browser.js"),(async()=>{const a=await(new Koder).initialize({wasmDirectory:"/barcode-memo/koder"});self.addEventListener("message",c=>{const b=c.data,d=a.decode(b.data,b.width,b.height);postMessage({data:d})})})()
