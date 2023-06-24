@@ -1,4 +1,4 @@
-var CACHE_NAME = "2023-03-19 09:45";
+var CACHE_NAME = "2023-06-24 10:10";
 var urlsToCache = [
   "/barcode-memo/",
   "/barcode-memo/index.js",
@@ -7,7 +7,6 @@ var urlsToCache = [
   "/barcode-memo/koder/zbar.js",
   "/barcode-memo/koder/zbar.wasm",
   "/barcode-memo/koder/browser.js",
-  "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css",
 ];
 
 self.addEventListener("install", function (event) {
