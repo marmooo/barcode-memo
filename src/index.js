@@ -14,15 +14,15 @@ function toggleDarkMode() {
   }
 }
 
-// https://webbibouroku.com/Blog/Article/isbn-10-js
-function _toISBN10(isbn13) {
-  const sum = isbn13.split("").slice(3, 12).reduce((acc, c, i) => {
-    return acc + (c[0] - "0") * (10 - i);
-  }, 0);
-  const checkDigit = 11 - sum % 11;
-  const isbn10 = isbn13.substring(3, 12) + checkDigit.toString();
-  return isbn10;
-}
+// // https://webbibouroku.com/Blog/Article/isbn-10-js
+// function toISBN10(isbn13) {
+//   const sum = isbn13.split("").slice(3, 12).reduce((acc, c, i) => {
+//     return acc + (c[0] - "0") * (10 - i);
+//   }, 0);
+//   const checkDigit = 11 - sum % 11;
+//   const isbn10 = isbn13.substring(3, 12) + checkDigit.toString();
+//   return isbn10;
+// }
 
 // https://fight-tsk.blogspot.com/2014/09/isbnjavascript.html
 function toISBN13(prefix, isbn10) {
@@ -90,13 +90,13 @@ function isValidISBN10(isbn10) {
   return (checkSum == actualCheckSum);
 }
 
-function _isISBN13(code) {
-  if (code.startsWith("978") || code.startsWith("979")) {
-    return true;
-  } else {
-    return false;
-  }
-}
+// function isISBN13(code) {
+//   if (code.startsWith("978") || code.startsWith("979")) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// }
 
 // https://qiita.com/mm_sys/items/9e95c48d4684957a3940
 function isValidEAN(barcodeStr) { // 引数は文字列
@@ -136,19 +136,19 @@ function getInfoFromISBN(isbn, callback) {
     });
 }
 
-function _getInfoFromISBNByGoogle(isbn, callback) {
-  fetch("https://www.googleapis.com/books/v1/volumes?q=" + isbn)
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.totalItems > 0) {
-        const title = data.items[0].volumeInfo.title;
-        const info = document.createTextNode(title);
-        if (callback) {
-          callback(info);
-        }
-      }
-    });
-}
+// function getInfoFromISBNByGoogle(isbn, callback) {
+//   fetch("https://www.googleapis.com/books/v1/volumes?q=" + isbn)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       if (data.totalItems > 0) {
+//         const title = data.items[0].volumeInfo.title;
+//         const info = document.createTextNode(title);
+//         if (callback) {
+//           callback(info);
+//         }
+//       }
+//     });
+// }
 
 function tick(time) {
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
