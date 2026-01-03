@@ -158,7 +158,7 @@ function tick(time) {
     canvasElement.width = width;
     canvasElement.height = height;
     canvas.drawImage(video, 0, 0, width, height);
-    if (time - prevTime > 500) {
+    if (time - prevTime > 100) {
       prevTime = time;
       const imageData = canvas.getImageData(0, 0, width, height);
       worker.postMessage({
@@ -230,7 +230,7 @@ async function copyToClipboard(text) {
 }
 
 function initWorker() {
-  const worker = new Worker("/barcode-memo/koder.js");
+  const worker = new Worker("/barcode-memo/zxing-worker.js", { type: "module" });
   worker.onmessage = (ev) => {
     const code = ev.data.data;
     if (!code) return;
@@ -262,7 +262,7 @@ let prevCode;
 loadConfig();
 const video = document.createElement("video");
 const canvasElement = document.getElementById("canvas");
-const canvas = canvasElement.getContext("2d");
+const canvas = canvasElement.getContext("2d", { willReadFrequently: true });
 const loadingMessage = document.getElementById("loadingMessage");
 const worker = initWorker();
 initScan();

@@ -1,11 +1,10 @@
-const cacheName = "2026-01-01 00:00";
+const cacheName = "2026-01-02 00:00";
 const urlsToCache = [
   "/barcode-memo/index.js",
   "/barcode-memo/favicon/favicon.svg",
-  "/barcode-memo/koder.js",
-  "/barcode-memo/koder/zbar.js",
-  "/barcode-memo/koder/zbar.wasm",
-  "/barcode-memo/koder/browser.js",
+  "/barcode-memo/zxing-worker.js",
+  "https://cdn.jsdelivr.net/npm/zxing-wasm@2.2.4/reader/+esm",
+  "https://fastly.jsdelivr.net/npm/zxing-wasm@2.2.4/dist/reader/zxing_reader.wasm",
 ];
 
 async function preCache() {
